@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Edithive - Crafting Visual Magic Frame by Frame</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<style>
+  /* Define new color variables for easy theme management */
+  :root {
+  --bg-dark: #0d0d0d;         /* Deep Charcoal */
+  --bg-medium: #1a1a1a;       /* Slightly lighter charcoal */
+  --text-primary: #ffffff;    /* Pure white */
+  --text-secondary: #cccccc;  /* Muted white-grey */
+  --accent-main: #d4af37;     /* Rich Gold */
+  --accent-light: #f5e08e;    /* Light gold */
+  --accent-highlight: #ffffff;
+  --shadow-color-main: rgba(212, 175, 55, 0.3);
+  --shadow-color-highlight: rgba(255, 255, 255, 0.1);
+}
+
+  /* Reset and base */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-dark); /* Using new background variable */
+    color: var(--text-primary); /* Using new text variable */
+    line-height: 1.6;
+    scroll-behavior: smooth;
+  }
+  a {
+    color: var(--accent-main); /* Using new accent variable */
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  a:hover, a:focus {
+    color: var(--accent-highlight); /* Lighter accent on hover */
+  }
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--accent-main); /* Scrollbar matches theme */
+    border-radius: 20px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-medium); /* Scrollbar track matches theme */
+  }
+
+  /* Container */
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Sticky Header */
+  header {
+    position: sticky;
+    top: 0;
+    background: var(--bg-medium); /* Using new background variable */
+    box-shadow: 0 1px 6px rgba(0,0,0,0.9);
+    z-index: 10;
+  }
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    padding: 1rem 1rem;
+    margin: auto;
+  }
+  .logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--accent-highlight); /* Logo text uses new accent */
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+  }
+  .nav-links a {
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.25rem 0;
+    position: relative;
+    color: var(--text-primary);
+  }
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 0;
+    height: 2px;
+    background: var(--accent-main); /* Underline matches theme */
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover::after,
+  .nav-links a:focus::after {
+    width: 100%;
+  }
+
+  /* Hero Section */
+  .hero {
+    background: linear-gradient(135deg, var(--bg-dark) 0%, #17023D 100%); /* Gradient for hero */
+    padding: 5rem 1rem 6rem;
+    text-align: center;
+    color: var(--text-primary);
+  }
+  .hero h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    color: var(--accent-highlight); /* Hero title uses highlight */
+  }
+  .hero .slogan {
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--text-secondary); /* Muted text */
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+  .hero .btn-group {
+    display: flex;
+    justify-content: center; /* Default center for desktop */
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    cursor: pointer;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    font-size: 0.9rem;
+    border: none;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 8px var(--shadow-color-highlight); /* Subtle glow */
+  }
+  .btn-primary {
+    background-color: var(--accent-main); /* Primary button uses main accent */
+    color: #000000; /* Dark text on bright button */
+    box-shadow: 0 0 20px var(--shadow-color-main); /* Stronger glow */
+  }
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background-color: var(--accent-light); /* Lighter on hover */
+    outline: none;
+    box-shadow: 0 0 28px var(--shadow-color-main); /* More intense glow */
+  }
+  .btn-secondary {
+    background-color: transparent;
+    border: 2px solid var(--accent-main); /* Secondary button matches main accent border */
+    color: var(--accent-main);
+    box-shadow: none;
+  }
+  .btn-secondary:hover,
+  .btn-secondary:focus {
+    background-color: var(--accent-main); /* Fills with accent on hover */
+    color: #000000;
+    outline: none;
+    box-shadow: 0 0 20px var(--shadow-color-main);
+  }
+
+  /* Section Headings */
+  section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+  section h2 {
+    font-size: 2.75rem;
+    font-weight: 700;
+    color: var(--accent-highlight); /* Section titles use highlight */
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  /* Our Work Section Specific Background */
+  /* Removed background property for #our-work */
+
+  /* Our Work Section */
+  .work-filters {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .work-filters button {
+    background: transparent;
+    border: 2px solid var(--accent-highlight); /* Filter buttons match highlight */
+    padding: 0.5rem 1.5rem;
+    margin: 0 0.75rem 0.75rem 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent-highlight);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 6px var(--shadow-color-highlight);
+  }
+  .work-filters button.active,
+  .work-filters button:hover,
+  .work-filters button:focus {
+    background-color: var(--accent-highlight); /* Changed to highlight color on hover */
+    border-color: var(--accent-highlight); /* Changed to highlight color on hover */
+    color: #000000;
+    outline: none;
+    box-shadow: 0 0 12px var(--shadow-color-highlight); /* Changed to highlight shadow on hover */
+  }
+  .work-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.75rem;
+  }
+  .work-card {
+    background: var(--bg-medium); /* Cards use medium background */
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 12px var(--shadow-color-main); /* Card shadow for glow */
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent; /* Fix blue highlight on long press for iOS/Android */
+  }
+  .work-card:hover,
+  .work-card:focus {
+    transform: translateY(-6px);
+    box-shadow: 0 15px 30px var(--shadow-color-highlight); /* Changed to highlight shadow on hover */
+    outline: none; /* Removed default blue outline */
+  }
+  .work-card img,
+  .work-card video {
+    width: 100%;
+    border-radius: 0.5rem;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 6px var(--shadow-color-main)); /* Image glow */
+  }
+  .work-card h3 {
+    font-weight: 600;
+    color: var(--accent-main); /* Card titles use main accent */
+    margin: 0 0 0.25rem;
+  }
+  .work-card p {
+    font-size: 0.875rem;
+    color: var(--text-secondary); /* Card text uses muted text */
+  }
+
+  /* Our Services Section */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .service-card {
+    background: var(--bg-medium); /* Service cards use medium background */
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 0 15px var(--shadow-color-highlight); /* Service card glow */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: default;
+    color: var(--text-primary);
+  }
+  .service-card:hover,
+  .service-card:focus-within {
+    box-shadow: 0 20px 40px var(--shadow-color-main); /* Stronger glow on hover */
+    transform: translateY(-6px);
+    outline: none;
+  }
+  .service-icon {
+    font-size: 3rem;
+    color: var(--accent-highlight); /* Service icons use highlight */
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 0 8px var(--shadow-color-highlight)); /* Icon glow */
+  }
+  .service-card h3 {
+    margin: 0 0 1rem;
+    font-weight: 700;
+    color: var(--accent-main); /* Service card titles use main accent */
+  }
+  .service-card p {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+
+  /* Contact Section */
+  #contact form {
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  #contact input[type="text"],
+  #contact input[type="email"],
+  #contact textarea {
+    padding: 1rem;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    border: 1.5px solid var(--accent-main); /* Input borders match accent */
+    background: var(--bg-dark); /* Input background is dark */
+    color: var(--text-primary);
+    resize: vertical;
+    transition: border-color 0.3s ease;
+    font-family: inherit;
+  }
+  #contact input[type="text"]::placeholder,
+  #contact input[type="email"]::placeholder,
+  #contact textarea::placeholder {
+    color: var(--accent-highlight); /* Placeholder text uses highlight */
+  }
+  #contact input[type="text"]:focus,
+  #contact input[type="email"]:focus,
+  #contact textarea:focus {
+    border-color: var(--accent-highlight); /* Highlight border on focus */
+    outline: none;
+    background: #0D002B; /* Slightly lighter dark on focus */
+  }
+  #contact button[type="submit"] {
+    padding: 1rem 0;
+    border-radius: 0.75rem;
+    border: none;
+    background-color: var(--accent-main); /* Submit button uses main accent */
+    color: #000000;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 10px var(--shadow-color-main); /* Submit button glow */
+  }
+  #contact button[type="submit"]:hover,
+  #contact button[type="submit"]:focus {
+    background-color: var(--accent-light); /* Lighter on hover */
+    outline: none;
+    box-shadow: 0 0 18px var(--shadow-color-main);
+  }
+
+  /* Social Media */
+  .social-icons {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  .social-icons a {
+    font-size: 1.5rem;
+    color: var(--accent-main); /* Social icons use main accent */
+    transition: color 0.3s ease;
+  }
+  .social-icons a:hover,
+  .social-icons a:focus {
+    color: var(--accent-highlight); /* Highlight on hover */
+    outline: none;
+  }
+  .social-icons a svg {
+    stroke: currentColor; /* Ensure SVG stroke uses defined color */
+  }
+
+  /* Footer */
+  footer {
+    background: var(--bg-medium); /* Footer uses medium background */
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary); /* Footer text muted */
+    border-top: 1px solid var(--accent-main); /* Footer border matches accent */
+  }
+  footer .footer-logo {
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--accent-highlight); /* Footer logo uses highlight */
+    user-select: none;
+  }
+  footer .footer-links {
+    margin-bottom: 0.75rem;
+  }
+  footer .footer-links a {
+    margin: 0 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+  }
+  footer .footer-links a:hover,
+  footer .footer-links a:focus {
+    color: var(--accent-main); /* Footer links match main accent on hover */
+    outline: none;
+  }
+
+  /* Scroll-based Animation Styles */
+  .scroll-fade {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  }
+
+  .scroll-fade.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+
+  /* Responsive */
+  @media (max-width: 768px){
+    #mainLogo {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 1rem;
+    }
+
+    .hero h1 {
+      font-size: 1.75rem;
+    }
+    .btn-group {
+      flex-direction: column;
+      gap: 1rem;
+      /* Center buttons in mobile view */
+      justify-content: center;
+      align-items: center; /* Ensure items within btn-group align center */
+    }
+    .nav-links {
+      display: none; /* Hide nav links on smaller screens */
+    }
+
+    /* Mobile specific adjustments for header logo */
+    nav {
+      flex-direction: column;
+      align-items: flex-start; /* Default for stacking content */
+      padding-top: 1rem; /* Reduced padding to make header smaller */
+      padding-bottom: 1rem; /* Reduced padding to make header smaller */
+    }
+    .logo {
+      font-size: 1.5rem; /* Adjusted logo size for smaller header */
+      text-align: left; /* Align to the left */
+      width: auto; /* Allow content to define width */
+      margin-left: 0; /* Ensure no auto margins that might center it */
+      margin-bottom: 0.5rem; /* Reduced margin bottom for logo */
+    }
+
+    /* Make "Edithive Productions" name bigger in mobile view */
+    .hero-production-name {
+        font-size: 2.5rem !important; /* Increased font size for mobile */
+        text-align: center;
+        width: 100%;
+    }
+
+    /* Make "View Our Work" and "Contact Us" buttons bigger in mobile view */
+    .btn {
+        padding: 0.75rem 2rem; /* Increased padding */
+        font-size: 1.1rem; /* Increased font size */
+    }
+
+    /* Adjust hero section column for mobile */
+    .hero-content-wrapper {
+        align-items: center !important; /* Center the whole column in mobile */
+        text-align: center; /* Center text inside this column */
+    }
+
+  }
+
+  /* Hero Content Wrapper for desktop default */
+  .hero-content-wrapper {
+    flex: 1;
+    min-width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Aligns content to the left in desktop */
+  }
+
+  /* --- Logo Animation Specific Styles --- */
+  /* Initially hide the logo and position it off-screen */
+  #mainLogo { /* Changed ID to #mainLogo for consistency */
+    opacity: 0;
+    transform: translateX(-200px); /* Start 200px to the left */
+    height: 120px; /* Keep original height */
+    margin-bottom: 10px; /* Keep original margin */
+  }
+
+  /* Light Mode Styles (Updated for the new theme's inversion) */
+  .light-mode {
+    background: #f0f0f5 !important; /* Lighter background */
+    color: #1e293b !important; /* Darker text */
+  }
+  .light-mode a,
+  .light-mode .logo,
+  .light-mode .btn-secondary,
+  .light-mode .footer-logo,
+  .light-mode .service-card h3 {
+    color: #0A001F !important; /* Very dark text/accents in light mode */
+  }
+  .light-mode .btn-primary {
+    background-color: #0A001F !important; /* Dark button in light mode */
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+  }
+  .light-mode .btn-primary:hover,
+  .light-mode .btn-primary:focus {
+    background-color: #1A003F !important; /* Slightly darker hover */
+    box-shadow: 0 0 15px rgba(0,0,0,0.4) !important;
+  }
+  .light-mode .btn-secondary {
+    border-color: #0A001F !important;
+  }
+  .light-mode .btn-secondary:hover,
+  .light-mode .btn-secondary:focus {
+    background-color: #0A001F !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3) !important;
+  }
+  .light-mode .work-card,
+  .light-mode .service-card,
+  .light-mode #contact input,
+  .light-mode #contact textarea {
+    background: #ffffff !important; /* White cards/inputs */
+    color: #1e293b !important;
+    box-shadow: 0 0 12px rgba(0,0,0,0.1) !important;
+    border-color: #bbbbbb !important; /* Subtle border */
+  }
+  .light-mode #contact input::placeholder,
+  .light-mode #contact textarea::placeholder {
+      color: #666666 !important;
+  }
+  .light-mode #contact input:focus,
+  .light-mode #contact textarea:focus {
+      background: #f8f8f8 !important;
+      border-color: #0A001F !important;
+  }
+  .light-mode footer {
+    background: #e0e0e0 !important; /* Lighter footer */
+    color: #1e293b !important;
+    border-top: 1px solid #cccccc !important;
+  }
+  .light-mode .social-icons a {
+      color: #0A001F !important;
+  }
+  .light-mode .work-card h3, .light-mode .service-card h3 {
+      color: #333333 !important; /* Darker headings in light mode */
+  }
+  .light-mode .work-card img, .light-mode .service-icon {
+      filter: none !important; /* Remove glowing filter in light mode */
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="container" role="navigation" aria-label="Primary navigation">
+
+
+<div class="logo" tabindex="0" aria-label="EditHive Logo">
+  EditHive
+</div>
+
+  </nav>
+</header>
+
+<main>
+
+
+<section class="hero" role="region" aria-label="Hero Section">
+  <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 2rem;">
+    <div class="hero-content-wrapper">
+      <img src="logo.png" alt="Edit Hive Productions Logo" id="mainLogo" />
+      <div class="hero-production-name" style="font-size: 2rem; font-weight: bold; color: #facc15; margin-bottom: 1.5rem;">EditHive Productions</div>
+      <div class="btn-group" style="margin-top: 0; gap: 1rem;">
+        <a href="#our-work" class="btn btn-primary" role="button">View Our Work</a>
+        <a href="#contact" class="btn btn-secondary" role="button">Contact Us</a>
+      </div>
+    </div>
+
+    <div style="flex: 1; min-width: 250px; background: var(--bg-medium); padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 0 15px var(--shadow-color-main);">
+      <h3 style="color: var(--accent-highlight); font-size: 1.5rem; margin-bottom: 1rem;">Our Promises</h3>
+      <ul style="list-style: none; padding: 0; font-size: 1rem; line-height: 1.8;">
+        <li>✅ On time delivery</li>
+        <li>✅ 100% customer satisfaction</li>
+        <li>✅ 100% refund if you're not satisfied</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+
+  <section id="our-work" role="region" aria-label="Our Work Section" class="container scroll-fade">
+    <h2>Our Work</h2>
+    <div class="work-filters" role="tablist" aria-label="Filter Work by Category">
+      <button class="active" role="tab" aria-selected="true" aria-controls="work-grid" id="filter-all" tabindex="0" data-filter="all">All</button>
+      <button role="tab" aria-selected="false" aria-controls="work-grid" id="filter-vfx" tabindex="-1" data-filter="vfx">VFX</button>
+      <button role="tab" aria-selected="false" aria-controls="work-grid" id="filter-editing" tabindex="-1" data-filter="editing">Editing</button>
+      <button role="tab" aria-selected="false" aria-controls="work-grid" id="filter-color" tabindex="-1" data-filter="color">Color Grading</button>
+    </div>
+    <div class="work-grid" id="work-grid">
+      <article tabindex="0" class="work-card" data-category="vfx">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="VFX project screenshot" loading="lazy" />
+        <h3>Epic Explosion VFX</h3>
+        <p>A high-energy special effects sequence for an action scene.</p>
+      </article>
+      <article tabindex="0" class="work-card" data-category="editing">
+        <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80" alt="Editing project screenshot" loading="lazy" />
+        <h3>Smooth Video Cut</h3>
+        <p>Crisp, seamless transitions that enhance storytelling.</p>
+      </article>
+      <article tabindex="0" class="work-card" data-category="color">
+        <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80" alt="Color graded footage screenshot" loading="lazy" />
+        <h3>Color Transformation</h3>
+        <p>Before & after color grading showcasing mood shifts.</p>
+      </article>
+      <article tabindex="0" class="work-card" data-category="vfx">
+        <img src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=800&q=80" alt="VFX project screenshot" loading="lazy" />
+        <h3>Futuristic City VFX</h3>
+        <p>Advanced visual effects for a sci-fi urban environment.</p>
+      </article>
+      <article tabindex="0" class="work-card" data-category="editing">
+        <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&w=800&q=80" alt="Video cutting screenshot" loading="lazy" />
+        <h3>Timeline Mastery</h3>
+        <p>Expert video cutting and scene pacing for impact.</p>
+      </article>
+      <article tabindex="0" class="work-card" data-category="color">
+        <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=800&q=80" alt="Color grading effect example" loading="lazy" />
+        <h3>Rich Color Grading</h3>
+        <p>Enhancing emotional tone through expert grading.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="our-services" role="region" aria-label="Our Services Section" class="container scroll-fade">
+    <h2>Our Services</h2>
+    <div class="services-grid">
+      <article class="service-card" tabindex="0" aria-label="Visual Effects Service">
+        <div class="service-icon" aria-hidden="true">✨</div>
+        <h3>VFX</h3>
+        <p>Create mesmerizing visual effects using the latest technology to bring your ideas to life.</p>
+      </article>
+      <article class="service-card" tabindex="0" aria-label="Video Cutting Service">
+        <div class="service-icon" aria-hidden="true">✂️</div>
+        <h3>Video Cutting</h3>
+        <p>Precision editing that sharpens your story and keeps viewers engaged from start to finish.</p>
+      </article>
+      <article class="service-card" tabindex="0" aria-label="Post Production Service">
+        <div class="service-icon" aria-hidden="true">🎞️</div>
+        <h3>Post Production</h3>
+        <p>Fine-tuning your footage with storytelling, audio syncing, and a professional polish.</p>
+      </article>
+      <article class="service-card" tabindex="0" aria-label="Colour Grading Service">
+        <div class="service-icon" aria-hidden="true">🎨</div>
+        <h3>Colour Grading</h3>
+        <p>Transform the look & feel of your video with expertly applied color corrections and moods.</p>
+      </article>
+      <article class="service-card" tabindex="0" aria-label="Seamless Transitions Service">
+        <div class="service-icon" aria-hidden="true">➡️</div>
+        <h3>Seamless Transitions</h3>
+        <p>Flawless transitions that blend scenes effortlessly, enhancing the flow of your video.</p>
+      </article>
+      <article class="service-card" tabindex="0" aria-label="Motion Graphics Service">
+        <div class="service-icon" aria-hidden="true">🚀</div>
+        <h3>Motion Graphics</h3>
+        <p>Dynamic animated visuals and text to elevate your storytelling and captivate your audience.</p>
+      </article>
+    </div>
+  </section>
+
+<section id="contact" class="container scroll-fade">
+  <h2>Contact Us</h2>
+  <form id="contact-form">
+    <input type="text" id="name" name="name" placeholder="Your Name" required />
+    <input type="email" id="email" name="email" placeholder="Your Email" required />
+    <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+    <button type="submit">Send Message</button>
+  </form>
+
+  <!-- ✅ Add this at bottom of body -->
+  <script type="text/javascript"
+     src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+  </script>
+  <script>
+    (function(){
+      emailjs.init("qW-l_h5yH9Ds1-GZr"); // Your Public Key
+    })();
+
+    document.getElementById('contact-form').addEventListener('submit', function(e){
+      e.preventDefault();
+
+      var params = {
+        from_name: document.getElementById("name").value,
+        from_email: document.getElementById("email").value,
+        message: document.getElementById("message").value,
+      };
+
+      emailjs.send("ompawar", "template_wzoe69q", params)
+        .then(function(response){
+          alert("✅ Message sent!");
+        }, function(error){
+          console.log("❌ Error:", error);
+          alert("❌ Something went wrong. Check console.");
+        });
+    });
+  </script>
+</section>
+
+
+</main>
+
+<footer>
+  <div class="footer-logo" tabindex="0" aria-label="EditHive Mini Logo">EditHive</div>
+  <div class="footer-links" aria-label="Footer quick links">
+    <a href="#hero">Home</a>
+    <a href="#our-work">Our Work</a>
+    <a href="#our-services">Services</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <p>© 2023 Edithive. All rights reserved.</p>
+</footer>
+
+<script>
+  (() => {
+    // Work filters tab control
+    const filterButtons = document.querySelectorAll('.work-filters button');
+    const workCards = document.querySelectorAll('.work-card');
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        // Update aria and active state of buttons
+        filterButtons.forEach(btn => {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+          btn.setAttribute('tabindex', '-1');
+        });
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+        button.setAttribute('tabindex', '0');
+        button.focus();
+
+        const filter = button.getAttribute('data-filter');
+        workCards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Basic Contact form handling
+    const form = document.querySelector('form');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      alert('Thank you for contacting Edithive. We will get back to you shortly.');
+      form.reset();
+    });
+  })();
+</script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        } else {
+          // Optional: If you want the animation to re-trigger on scroll back up, uncomment the line below.
+          // entry.target.classList.remove("visible");
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll(".scroll-fade").forEach((el) => observer.observe(el));
+  });
+</script>
+
+<script>
+  // GSAP animation for the logo
+  window.addEventListener('DOMContentLoaded', () => {
+    gsap.to("#mainLogo", {
+      duration: 2, // Increased duration for more visible bounces
+      opacity: 1,    // Fade in to full opacity
+      x: 0,          // Move to original X position
+      ease: "elastic.out(1, 0.5)" // More pronounced elastic bounce
+    });
+  });
+</script>
+
+</body>
+</html>
